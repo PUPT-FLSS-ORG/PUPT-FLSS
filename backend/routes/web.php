@@ -70,3 +70,25 @@ Route::get('/test-load-schedule-published', function () {
     ];
     return view('emails.load_schedule_published', $data);
 });
+
+
+// Test change request email
+Route::get('/test-change-request', function () {
+    $data = [
+        'faculty' => (object)[
+            'last_name' => 'Dela Cruz',
+            'first_name' => 'Juan',
+            'middle_name' => 'J',
+            'suffix_name' => 'Sr.',
+            'email' => 'juan.delacruz@example.com',
+        ],
+        'admin' => (object)[
+            'last_name' => 'Ferrer',
+            'first_name' => 'Marissa',
+            'middle_name'=> 'L.',
+            'email' => 'marissa.ferrer@example.com',
+        ],
+        'admin_dashboard_link' => 'https://app.pupt-flss.com/admin-dashboard',
+    ];
+    return view('emails.change_request', $data);
+});

@@ -142,4 +142,33 @@ class EmailController extends Controller
         return response()->json(['message' => 'Faculty load and schedule email notification sent successfully'], 200);
     }
 
+    public function notifyAdminsOfPreferenceChange(Request $request)
+    {
+        $facultyId = $request->input('faculty_id');
+    
+        // Retrieve the faculty details
+        $faculty = Faculty::find($facultyId);
+        if (!$faculty || !$faculty->user) {
+            return response()->json(['message' => 'Faculty not found or missing user details'], 404);
+        }
+    
+        // Retrieve all active admins
+        $admins = \App\Models\User::where('role', 'admin')
+            ->where('status', 'Active')
+            ->get();
+    
+        if ($admins->isEmpty()) {
+            return response()->json(['message' => 'No active admins found'], 404);
+        }
+    
+        // Dispatch a job for each admin
+        foreach ($admins as $admin) {
+            \App\Jobs\NotifyAdminOfPreferenceChangeJob::dispatch($faculty, $admin);
+        }
+    
+        return response()->json([
+            'message' => 'Admin notifications are being sent asynchronously',
+        ], 200);
+    }
+    
 }
